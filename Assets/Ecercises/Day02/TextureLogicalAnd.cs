@@ -1,98 +1,103 @@
 //using System.Drawing;
+using TreeEditor;
 using Unity.VisualScripting;
 using UnityEngine;
-using TreeEditor;
+using UnityEngine.UIElements;
 using static UnityEngine.Rendering.DebugUI;
 
 
 public class TextureLogicalAnd : MonoBehaviour
 {
     public int imageSize = 64;
-    public Texture2D texture;
-
     private System.Random rnd;
     public float scaler = 0.1f;
-    private float lastScaler = 0f;
+    public int seed = 0, lac = 1, oct = 4;
+    System.Random rnd2;
+    public Vector2 offsetsPos = Vector2.zero;
+   // private float lastScaler = 0f;
+    public  Color whatColor_0 = Color.pink;
+    public  Color whatColor_1 = Color.pink;
+    public  Color whatColor_2 = Color.pink;
+    public  Color whatColor_3 = Color.pink;
+    public  Color whatColor_4 = Color.pink;
+    public  Color whatColor_5 = Color.pink;
+
+    public Color[] colors;
+    
+    [SerializeField]
+    public AnimationCurve animCurve = new AnimationCurve();
+
+    private void Awake()
+    {
+        colors = new Color[6];
+        colors[0] = whatColor_0;
+        colors[1] = whatColor_1;
+        colors[2] = whatColor_2;
+        colors[3] = whatColor_3;
+        colors[4] = whatColor_4;
+    }
 
     private void Start()
     {
 
-        texture = new Texture2D(imageSize, imageSize);
-        //createPattern();
-        ///createPatternByRandPos();
-        createPatternByNoise();
-        GetComponent<MeshRenderer>().material.mainTexture = texture;
+
+        offsetsPos.x += 0.1f;
+        scaler += 0.1f;
+
+
+        rnd2 = new System.Random(seed);
+
+        float[,] map = NoiseMapGenerator.GenerateNoiseMap(imageSize, imageSize, scaler, lac, oct, 1, rnd2.Next(), offsetsPos);
+        float[,] falloffmap = NoiseMapGenerator.GenerateFallOffMap(imageSize, animCurve);
+        GetComponent<MeshRenderer>().material.mainTexture = DrawColorMapToTexture(map);
 
     }
 
     private void Update()
     {
-      
+        Start();
+    }
+    public Texture2D DrawGreyScaleMapToTexture(float[,] mapToDraw)
+    {
+        Texture2D texture = new Texture2D(mapToDraw.GetLength(0), mapToDraw.GetLength(1));
+        //go through each pixel in this texture
+        for (int i = 0; i < mapToDraw.GetLength(0); i++)
+        {
+            for (int j = 0; j < mapToDraw.GetLength(1); j++)
+            {
+                float c = mapToDraw[i, j];
+                texture.SetPixel(i, j, new Color(c,c,c));
+            }
+        }
+        texture.Apply();
+        return texture;
+    }
 
-        if(scaler!=lastScaler)
-            createPatternByNoise();
+    public Texture2D DrawColorMapToTexture(float[,] mapToDraw)
+    {
+       
+        Texture2D texture = new Texture2D(mapToDraw.GetLength(0), mapToDraw.GetLength(1));
+        //go through each pixel in this texture
         
-        /*if (Input.GetKeyDown(KeyCode.A))
-        {
-            createPatternByNoise();
-            Debug.Log("pressed button A");
-        }*/
-    }
-
-    public void createPattern() 
-    {
-        //go through each pixel in this texture
-        for (int y = 0; y < imageSize; y++) 
-        {
-            for (int x = 0; x < imageSize; x++)
+            
+            for (int i = 0; i < mapToDraw.GetLength(0); i++)
             {
-                //var r = rnd.Next(256);
-                //Color randomColor = Color.HSVToRGB(r, r, r);
-                Color pixelColor = ((x&y)!=0 ? Color.black : Color.white);
-                texture.SetPixel(x, y, pixelColor);
+            for (int j = 0; j < mapToDraw.GetLength(1); j++)
+            {
 
+                if (mapToDraw[i, j] < .2f) texture.SetPixel(i, j, colors[0]);
+                else if (mapToDraw[i, j] < .4f && mapToDraw[i, j] > .2f) texture.SetPixel(i, j, colors[1]);
+                else if (mapToDraw[i, j] < .6f && mapToDraw[i, j] > .4f) texture.SetPixel(i, j, colors[2]);
+                else if (mapToDraw[i, j] < .8f && mapToDraw[i, j] > .6f) texture.SetPixel(i, j, colors[3]);
+                else if (mapToDraw[i, j] < .9f && mapToDraw[i, j] > .8f) texture.SetPixel(i, j, colors[4]);
+                else texture.SetPixel(i, j, Color.black);
+                // Here you choose color by Variable in c
             }
+
         }
         texture.Apply();
-    }
-    public void createPatternByRandPos()
-    {
-        //go through each pixel in this texture
-        for (int y = 0; y < imageSize; y++)
-        {
-            for (int x = 0; x < imageSize; x++)
-            {
-                float value = rnd.Next(1);
-                //Color randomColor = Color.HSVToRGB(r, r, r);
-                Color pixelColor = (value>0.5f ? Color.black : Color.white);
-                texture.SetPixel(x, y, pixelColor);
+        return texture;
 
-            }
-        }
-        texture.Apply();
-    }
 
-    public void createPatternByNoise()
-    {
-        if (scaler < 0) scaler = 0.000001f;
-
-        lastScaler = scaler;//need it for update
-
-            //go through each pixel in this texture
-            for (int y = 0; y < texture.height; y++)
-            {
-                for (int x = 0; x < texture.width; x++)
-                {
-
-                    float sampleX = (float)x / texture.width / scaler;
-                    float sampleY = (float)y / texture.height / scaler;
-
-                    float perlinResult = Mathf.PerlinNoise(sampleX, sampleY);
-                    Color pixelColor = Color.Lerp(Color.black, Color.white, perlinResult);
-                    texture.SetPixel(x, y, pixelColor);
-
-                }
-            }
-        texture.Apply();
     }
 }
