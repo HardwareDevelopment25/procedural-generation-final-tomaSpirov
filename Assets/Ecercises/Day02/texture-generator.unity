@@ -289,7 +289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a80ad30e5b5d41f4ca4aae715f913768, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  imageSize: 64
+  imageSize: 180
+  texture: {fileID: 0}
   scaler: 0.1
 --- !u!1 &1356056439
 GameObject:

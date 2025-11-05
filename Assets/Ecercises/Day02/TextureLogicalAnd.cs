@@ -12,7 +12,7 @@ public class TextureLogicalAnd : MonoBehaviour
 
     private System.Random rnd;
     public float scaler = 0.1f;
-
+    private float lastScaler = 0f;
 
     private void Start()
     {
@@ -27,11 +27,16 @@ public class TextureLogicalAnd : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
+      
+
+        if(scaler!=lastScaler)
+            createPatternByNoise();
+        
+        /*if (Input.GetKeyDown(KeyCode.A))
         {
             createPatternByNoise();
             Debug.Log("pressed button A");
-        }
+        }*/
     }
 
     public void createPattern() 
@@ -71,21 +76,23 @@ public class TextureLogicalAnd : MonoBehaviour
     {
         if (scaler < 0) scaler = 0.000001f;
 
-        //go through each pixel in this texture
-        for (int y = 0; y < texture.height; y++)
-        {
-            for (int x = 0; x < texture.width; x++)
-            {
-                
-                float sampleX = (float)x/ texture.width / scaler;
-                float sampleY = (float)y/ texture.height / scaler;
-                
-                float perlinResult = Mathf.PerlinNoise(sampleX, sampleY);
-                Color pixelColor =Color.Lerp(Color.black, Color.white, perlinResult);
-                texture.SetPixel(x, y, pixelColor);
+        lastScaler = scaler;//need it for update
 
+            //go through each pixel in this texture
+            for (int y = 0; y < texture.height; y++)
+            {
+                for (int x = 0; x < texture.width; x++)
+                {
+
+                    float sampleX = (float)x / texture.width / scaler;
+                    float sampleY = (float)y / texture.height / scaler;
+
+                    float perlinResult = Mathf.PerlinNoise(sampleX, sampleY);
+                    Color pixelColor = Color.Lerp(Color.black, Color.white, perlinResult);
+                    texture.SetPixel(x, y, pixelColor);
+
+                }
             }
-        }
         texture.Apply();
     }
 }
