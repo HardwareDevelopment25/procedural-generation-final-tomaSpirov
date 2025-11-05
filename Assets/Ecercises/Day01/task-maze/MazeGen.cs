@@ -17,7 +17,7 @@ public class MazeGen : MonoBehaviour
 
 
     //private Stack<bool> stack = new Stack<bool>();
-    private int offsetMove = 2;//add more steps to current
+    //private int offsetMove = 2;//add more steps to current
 
     System.Random rand;
 
