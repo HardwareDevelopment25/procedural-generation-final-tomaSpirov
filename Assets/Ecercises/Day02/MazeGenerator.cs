@@ -38,7 +38,7 @@ public class MazeGenerator : MonoBehaviour
         stack.Push(current);
 
 
-        while (stack.Count>0) //stuff exist on the stackj
+        while (stack.Count>0)//stuff exist on the stackj
         {
         current = stack.Pop();//takes the top position to be checked
         
@@ -59,7 +59,7 @@ public class MazeGenerator : MonoBehaviour
 
             //4.after CHECK next choice a neighbour
             //choice a neighbour and add it to the stack
-            if (neighbors.Count > 0) //did we add anything to the list
+            if (neighbors.Count > 0)//did we add anything to the list
             {
                 stack.Push(current);//puts back what we poped of the stack
 
