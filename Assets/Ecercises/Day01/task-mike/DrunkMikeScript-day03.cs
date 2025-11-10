@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 
 
-public class DrunkMikeScript : MonoBehaviour
+public class DrunkMikeScriptDay03 : MonoBehaviour
 {
 
     public GameObject WallPrefab, FloorPrefab;
