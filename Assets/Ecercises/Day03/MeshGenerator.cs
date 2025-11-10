@@ -10,7 +10,7 @@ public static class MeshGenerator
 
 		float topLeftX = (width - 1) / -2f;
 		float topLeftZ = (height - 1) / 2f;
-		float heighValue = 0f;
+		
 		MeshData meshData = new MeshData(width, height);
 		int vertexINdex = 0;
 
@@ -53,15 +53,15 @@ public class MeshData
 		vertices = new Vector3[meshWidth * meshHeight];
 
 		// i dont want to fall off the grid into invalid space
-		triangles = new int[(meshWidth-1) * (meshHeight-1)*6];
-		uvs = new Vector2[meshWidth*meshHeight];
+		triangles = new int[(meshWidth * meshHeight *6)];// (128*128*6 = 98304) correct 
+        uvs = new Vector2[meshWidth*meshHeight];
 	}
 	public void AddTriangle(int a,int b, int c) 
 	{
 		triangles[trianglesIndex] = a;
 		triangles[trianglesIndex+1] = b;
 		triangles[trianglesIndex+2] = c;
-		trianglesIndex += 2;
+		trianglesIndex += 3;
 	}
 
 	public  Mesh CreateMesh() 

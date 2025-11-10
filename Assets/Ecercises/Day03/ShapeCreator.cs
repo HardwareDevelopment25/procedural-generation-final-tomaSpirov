@@ -29,11 +29,14 @@ public class ShapeCreator : MonoBehaviour
         MeshRenderer mr = this.AddComponent <MeshRenderer>();
 
         Material mat = new Material(Shader.Find("Unlit/Texture"));
-        mr.material = mat;
+        //mr.material = mat;
 
         float[,] noiseMap = NoiseMapGenerator.GenerateNoiseMap(SizeOfGrid, SizeOfGrid, 10,1,5,1,0,Vector2.zero);
         MeshData md = MeshGenerator.GenerateTerrain(noiseMap, 10f);
         mf.sharedMesh = md.CreateMesh();
+
+        mat.mainTexture = ProcGenTool.RenderNoiseAsGrayTexture(noiseMap);
+        mr.material = mat;
 
     }
 
