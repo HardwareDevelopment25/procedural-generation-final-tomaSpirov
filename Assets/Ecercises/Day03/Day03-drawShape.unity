@@ -300,6 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584763cf00d493b41a10105972641d70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SizeOfGrid: 128
   sizeOfShape: 10
 --- !u!1 &2142723059
 GameObject:
