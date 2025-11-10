@@ -1,16 +1,15 @@
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
-[CustomEditor(typeof(MazeGenerator03))]
+[CustomEditor(typeof(MazeGenerator))] 
 public class MazeGeneratorEditor : Editor
 {
     // Override the default Inspector GUI Rendering
 
     public override void OnInspectorGUI()
     {
-        // Cast the target object to MazeGenerator so we can access its fields and methods
-        MazeGenerator03 mazeGen = (MazeGenerator03)target;
+     // Cast the target object to MazeGenerator so we can access its fields and methods
+     MazeGenerator mazeGen  = (MazeGenerator)target;
         GUILayout.Label("---Configure Maze---", EditorStyles.largeLabel);
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.EndHorizontal();
@@ -18,10 +17,10 @@ public class MazeGeneratorEditor : Editor
         EditorGUILayout.Space();
 
         // Draw the default inspector UI for all serialised fields
-        if (DrawDefaultInspector())
+        if(DrawDefaultInspector())
         {
             //switches to 2D and mazkes new maze;
-
+           
             if (mazeGen.size < 16 || mazeGen.size > 1000)
             {
                 mazeGen.size = 32;
@@ -53,13 +52,6 @@ public class MazeGeneratorWindow : EditorWindow
         GetWindow<MazeGeneratorWindow>();
     }
 
-    [MenuItem("Tools/magic tool(recommended)")]
-
-    public static void ShowMagicWindow()
-    {
-        GetWindow<MazeGeneratorWindow>();
-    }
-
     // Lets decorate our window and create this new game obejct with a maze anywhere we like.
     private void OnGUI()
     {
@@ -70,20 +62,20 @@ public class MazeGeneratorWindow : EditorWindow
         GUILayout.Label(" Configure Maze: ");
 
         // creates a input field in case we want to choose defaul maze size
-        InitialMazeSize = EditorGUILayout.IntField("Size: ", InitialMazeSize);
+        InitialMazeSize = EditorGUILayout.IntField("Size: ",InitialMazeSize);
 
         // once button is pressed we run a thread to make out maze in editor
         if (GUILayout.Button("Generate"))
         {
             // create a new gameobject
             GameObject newGameObject = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            newGameObject.name = InitialMazeSize + "x" + InitialMazeSize + "Generated Maze";
+            newGameObject.name = InitialMazeSize+"x"+ InitialMazeSize + "Generated Maze";
 
             Undo.RegisterCreatedObjectUndo(newGameObject, "Undo Create Object");
             // crate material and add a shader
             Material mat = new Material(Shader.Find("Unlit/Texture"));
             // Adding a component also returns its refrence.
-            MazeGenerator03 mazeGen = newGameObject.AddComponent<MazeGenerator03>();
+             MazeGenerator mazeGen = newGameObject.AddComponent<MazeGenerator>();
 
 
             // get the meshrenderer put on the material and run the generation ofthe maze.
@@ -98,3 +90,4 @@ public class MazeGeneratorWindow : EditorWindow
     }
 
 }
+This paste expires in <1 hour. Public IP access. Share whatever you see with others in seconds with Context.Terms of ServiceReport this
