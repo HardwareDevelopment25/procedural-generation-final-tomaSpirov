@@ -23,7 +23,7 @@ public class GenNoiseMapD02T01 : MonoBehaviour
         regions = new MapColorGenerator.TerrainType[]
 {
     new MapColorGenerator.TerrainType { name = "Water", height = 0.3f, color = Color.blue },
-    new MapColorGenerator.TerrainType { name = "Sand", height = 0.4f, color = new Color(0.9f, 0.8f, 0.6f) },
+    new MapColorGenerator.TerrainType { name = "Sand", height = 0.4f, color = Color.beige },
     new MapColorGenerator.TerrainType { name = "Grass", height = 0.6f, color = Color.green },
     new MapColorGenerator.TerrainType { name = "Mountain", height = 0.8f, color = Color.gray },
     new MapColorGenerator.TerrainType { name = "Snow", height = 1.0f, color = Color.white }

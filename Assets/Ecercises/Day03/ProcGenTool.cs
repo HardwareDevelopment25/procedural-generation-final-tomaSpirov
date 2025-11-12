@@ -2,6 +2,23 @@ using UnityEngine;
 
 public static class ProcGenTool
 {
+    public static Texture2D RenderNoiseAsColorTexture(float[,] maze)
+    {
+        Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
+        for (int x = 0; x < maze.GetLength(0); x++)
+        {
+            for (int y = 0; y < maze.GetLength(1); y++)
+            {
+                Color gradiant = new Color(maze[x, y], maze[x, y], maze[x, y]);
+                texture2D.SetPixel(x, y, gradiant);
+            }
+        }
+        texture2D.Apply();
+        texture2D.filterMode = FilterMode.Point;
+        texture2D.wrapMode = TextureWrapMode.Clamp;
+        return texture2D;
+
+    }
     public static Texture2D RenderNoiseAsGrayTexture(float[,] maze) 
     {
         Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
