@@ -2,6 +2,58 @@ using UnityEngine;
 
 public static class ProcGenTool
 {
+    public static Texture2D ConvertBoolArrayAsIntTexture(int[,] maze)
+    {
+
+        Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
+
+        for (int y = 0; y < maze.GetLength(0); y++)
+        {
+            for (int x = 0; x < maze.GetLength(1); x++)
+            {
+                if (maze[x, y] == 1)
+                {
+                    texture2D.SetPixel(x, y, Color.white);
+                }
+                else
+                {
+                    texture2D.SetPixel(x, y, Color.black);
+                }
+            }
+        }
+
+        texture2D.Apply();
+        texture2D.filterMode = FilterMode.Point;
+        texture2D.wrapMode = TextureWrapMode.Clamp;
+
+        return texture2D;
+    }
+    public static Texture2D RenderBoolArrayAsTexture(bool[,] maze)
+    {
+
+        Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
+
+        for (int y = 0; y < maze.GetLength(0); y++)
+        {
+            for (int x = 0; x < maze.GetLength(1); x++)
+            {
+                if (maze[x, y])
+                {
+                    texture2D.SetPixel(x, y, Color.white);
+                }
+                else
+                {
+                    texture2D.SetPixel(x, y, Color.black);
+                }
+            }
+        }
+
+        texture2D.Apply();
+        texture2D.filterMode = FilterMode.Point;
+        texture2D.wrapMode = TextureWrapMode.Clamp;
+
+        return texture2D;
+    }
     public static Texture2D RenderNoiseAsColorTexture(float[,] maze)
     {
         Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
@@ -19,12 +71,12 @@ public static class ProcGenTool
         return texture2D;
 
     }
-    public static Texture2D RenderNoiseAsGrayTexture(float[,] maze) 
+    public static Texture2D RenderNoiseAsGrayTexture(float[,] maze)
     {
         Texture2D texture2D = new Texture2D(maze.GetLength(0), maze.GetLength(1));
         for (int x = 0; x < maze.GetLength(0); x++)
         {
-            for (int y = 0; y < maze.GetLength(1); y++) 
+            for (int y = 0; y < maze.GetLength(1); y++)
             {
                 Color gradiant = new Color(maze[x, y], maze[x, y], maze[x, y]);
                 texture2D.SetPixel(x, y, gradiant);
@@ -37,7 +89,7 @@ public static class ProcGenTool
 
     }
 
-    public static Mesh makeTriangle(float SizeOfTriangle) 
+    public static Mesh makeTriangle(float SizeOfTriangle)
     {
         Mesh triangle = new Mesh();
 
@@ -70,7 +122,7 @@ public static class ProcGenTool
     }
 
 
-    public static Mesh makeSquare(float SizeOfSquare) 
+    public static Mesh makeSquare(float SizeOfSquare)
     {
         Mesh square = new Mesh();
 
@@ -141,5 +193,38 @@ public static class ProcGenTool
 
 
         return square;
+    }
+
+    public static int[,] BorderMe(int[,] gridBorder)
+    {
+        for (int x = 0; x < gridBorder.GetLength(0); x++)
+        {
+            for (int y = 0; y < gridBorder.GetLength(1); y++)
+            {
+                //all 0 and heights /widths are set to walls
+                if (x == 0 || x == (gridBorder.GetLength(0) - 1) || y == 0 || y == (gridBorder.GetLength(1) - 1))
+                { gridBorder[x, y] = 1; }
+            }
+        }
+        return gridBorder;
+    }
+
+    public static int checkFortNeighbours(int x, int y, int[,] grid) 
+    {
+        int countNeighbour = 0;
+        for (int currX = x - 1; currX <= x + 1; currX++)
+        {
+            for (int currY = y - 1; currY < y + 1; currY++)
+            {
+                if(grid[currX, currY] == 1)
+                    { countNeighbour++; }
+            }
+
+        }
+            
+
+
+        return countNeighbour;
+
     }
 }
