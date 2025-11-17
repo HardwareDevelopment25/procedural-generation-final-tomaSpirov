@@ -13,9 +13,13 @@ public class CellAutomat : MonoBehaviour
     private int[,] intGrid;
     public float speed = 5;
 
-    public GameObject wall;
-    public GameObject floor;
-
+    public GameObject cellPrefab;
+    public GameObject wallPrefab;
+    public GameObject waterPrefab;
+    public GameObject woodPrefab;
+    public GameObject grassPrefab;
+    public GameObject floorPrefab;
+    public Sprite[] martinSprite;
 
     private void Awake()
     {
@@ -47,12 +51,12 @@ public class CellAutomat : MonoBehaviour
         planeRenderer = GameObject.CreatePrimitive(PrimitiveType.Plane).GetComponent<MeshRenderer>();
         intGrid = ProcGenTool.BorderMe(intGrid);
         SmoothMap();
-        //ApplyFloorAndWall();
+        ApplyFloorAndWall();
 
         planeRenderer.material.mainTexture = ProcGenTool.ConvertBoolArrayAsIntTexture(intGrid);
         //int totalNeighbours = ProcGenTool.checkFortNeighbours(intGrid);
         StartCoroutine(animator());
-
+        GenerateMarchinSquares();
         //add this to render texture of prefabs
         //Render3D();
 
@@ -64,10 +68,52 @@ public class CellAutomat : MonoBehaviour
         {
             for (int y = 0; y < intGrid.GetLength(1); y++) 
             {
-                Debug.Log(GetConfigIndex(x, y));
+               Debug.Log(GetConfigIndex(x, y));
+                PlaceCell(x,y,(GetConfigIndex(x, y)));
             }
         }
         
+    }
+
+    void PlaceCell(int x, int y, int configIndex) 
+    {
+        Vector3 pos = new Vector3(x,0, y);
+        GameObject cell = Instantiate(cellPrefab, pos, Quaternion.identity);
+        cell.transform.rotation = Quaternion.Euler(90,0,0);
+        SpriteRenderer spriteRenderer = cell.GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = martinSprite[configIndex];
+
+
+    }
+
+    public void Render3D(int[,] grid) 
+    {
+        for (int x = 0; x < intGrid.GetLength(0); x++) 
+        {
+            for (int y = 0; y < intGrid.GetLength(1); y++)
+            {
+                switch (grid[x, y]) 
+                {
+                    case 0:
+                        GameObject.Instantiate(floorPrefab, new Vector3(x, 0, y), Quaternion.identity, this.transform);
+                        break;
+                        case 1: GameObject.Instantiate(wallPrefab, new Vector3(x, 0, y), Quaternion.identity, this.transform);
+                        break;
+                    case 2:
+                        GameObject.Instantiate(waterPrefab, new Vector3(x, 0, y), Quaternion.identity, this.transform);
+                        break;
+                    case 3:
+                        GameObject.Instantiate(grassPrefab, new Vector3(x, 0, y), Quaternion.identity, this.transform);
+                        break;
+                    case 4:
+                        GameObject.Instantiate(waterPrefab, new Vector3(x, 0, y), Quaternion.identity, this.transform);
+                        break;
+
+                }
+
+            }
+        }
+    
     }
 
     int GetConfigIndex(int x, int y) 
@@ -103,17 +149,19 @@ public class CellAutomat : MonoBehaviour
 
     void ApplyFloorAndWall() 
     {
-        for (int i = 0; i < gridSize; i++)
+        for (int x = 0; x < gridSize; x++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int y = 0; y < gridSize; y++)
             {
-                if (intGrid[i, j] == 1)
+                if (intGrid[x, y] == 1)
                 {
                     //draw a floor
-
+                    GameObject.Instantiate(floorPrefab, new Vector3(x, 0, y), Quaternion.identity, transform);
                 }
-                else {
+                else if(intGrid[x, y] == 0)
+                {
                     //draw a wall
+                    GameObject.Instantiate(wallPrefab, new Vector3(x, 0, y), Quaternion.identity, transform);
                 }
                 
             }
@@ -131,6 +179,9 @@ public class CellAutomat : MonoBehaviour
                 int nei = GetNeighbours(i, j);
                 if (nei > 4) intGrid[i, j] = 1;
                 else if(nei<4)intGrid[i, j] = 0;
+
+
+
             }
         }
     }
