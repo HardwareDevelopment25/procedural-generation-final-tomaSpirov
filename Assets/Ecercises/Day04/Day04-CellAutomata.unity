@@ -156,6 +156,8 @@ MonoBehaviour:
   seed: 0
   planeRenderer: {fileID: 0}
   speed: 5
+  wall: {fileID: 4574898018943798949, guid: e97f9510339eaaf419825615d945a4a1, type: 3}
+  floor: {fileID: 6902006875779241291, guid: b9ff30fc57c897d40a7fc58a6f00f53d, type: 3}
 --- !u!65 &305635788
 BoxCollider:
   m_ObjectHideFlags: 0

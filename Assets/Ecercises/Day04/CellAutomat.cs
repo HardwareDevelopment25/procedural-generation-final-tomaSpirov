@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Collections;
 using System.Collections;
+using NUnit.Framework.Internal.Commands;
 
 public class CellAutomat : MonoBehaviour
 {
@@ -11,6 +12,10 @@ public class CellAutomat : MonoBehaviour
     public MeshRenderer planeRenderer;
     private int[,] intGrid;
     public float speed = 5;
+
+    public GameObject wall;
+    public GameObject floor;
+
 
     private void Awake()
     {
@@ -41,11 +46,39 @@ public class CellAutomat : MonoBehaviour
 
         planeRenderer = GameObject.CreatePrimitive(PrimitiveType.Plane).GetComponent<MeshRenderer>();
         intGrid = ProcGenTool.BorderMe(intGrid);
-       SmoothMap();
+        SmoothMap();
+        //ApplyFloorAndWall();
+
         planeRenderer.material.mainTexture = ProcGenTool.ConvertBoolArrayAsIntTexture(intGrid);
         //int totalNeighbours = ProcGenTool.checkFortNeighbours(intGrid);
         StartCoroutine(animator());
 
+        //add this to render texture of prefabs
+        //Render3D();
+
+    }
+    void GenerateMarchinSquares() 
+    {
+
+        for (int x = 0; x < intGrid.GetLength(0); x++) 
+        {
+            for (int y = 0; y < intGrid.GetLength(1); y++) 
+            {
+                Debug.Log(GetConfigIndex(x, y));
+            }
+        }
+        
+    }
+
+    int GetConfigIndex(int x, int y) 
+    {
+        int configIndex = 0;
+        if (intGrid[x,y] == 1) configIndex |= 1;
+        if (intGrid[x+1,y] == 1) configIndex |= 2;
+        if (intGrid[x+1,y+1] == 1) configIndex |= 4;
+        if (intGrid[x,y+1] == 1) configIndex |= 8;
+
+        return configIndex;
     }
 
     private void Update()
@@ -66,6 +99,26 @@ public class CellAutomat : MonoBehaviour
             planeRenderer.material.mainTexture = ProcGenTool.ConvertBoolArrayAsIntTexture(intGrid);
             yield return new WaitForSeconds(speed);
         }
+    }
+
+    void ApplyFloorAndWall() 
+    {
+        for (int i = 0; i < gridSize; i++)
+        {
+            for (int j = 0; j < gridSize; j++)
+            {
+                if (intGrid[i, j] == 1)
+                {
+                    //draw a floor
+
+                }
+                else {
+                    //draw a wall
+                }
+                
+            }
+        }
+
     }
 
     void SmoothMap() 
