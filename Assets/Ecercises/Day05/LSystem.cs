@@ -22,6 +22,7 @@ public class LSystem : MonoBehaviour
         {
             var l= law.Split("->");
             rules.Add(l[0][0], l[1]);
+
         }
         currentString = axiom;
         GenerateSystemString();
@@ -41,6 +42,8 @@ public class LSystem : MonoBehaviour
         }
         Debug.Log(currentString);
     }
+
+   
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
