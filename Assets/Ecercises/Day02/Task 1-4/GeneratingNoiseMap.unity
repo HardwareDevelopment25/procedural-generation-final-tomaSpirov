@@ -274,12 +274,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textureRenderer: {fileID: 117715368}
-  mapChunkSize: 10
-  noiseScale: 0.2
+  mapChunkSize: 200
+  noiseScale: 50
   octaves: 5
   persistence: 1
   lacunarity: 2
-  seed: 2
+  seed: 12
   offset: {x: 0, y: 0}
   falloffCurve:
     serializedVersion: 2
@@ -306,22 +306,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   useFalloff: 1
-  regions:
-  - name: snow
-    height: 1
-    color: {r: 1, g: 1, b: 1, a: 0}
-  - name: mountain
-    height: 0.8
-    color: {r: 0.499288, g: 0.5852936, b: 0.6415094, a: 0}
-  - name: grass
-    height: 0.6
-    color: {r: 0.22241013, g: 0.9622642, b: 0.3552364, a: 0}
-  - name: sand
-    height: 0.4
-    color: {r: 0.8396226, g: 0.5492907, b: 0.20198467, a: 0}
-  - name: water
-    height: 0.3
-    color: {r: 0.02180491, g: 0.8784314, b: 0.9245283, a: 0}
+  regions: []
 --- !u!1 &1356056439
 GameObject:
   m_ObjectHideFlags: 0

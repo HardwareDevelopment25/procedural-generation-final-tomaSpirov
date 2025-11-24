@@ -1,3 +1,4 @@
+//Task 1: Generating a Maze
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -73,6 +74,7 @@ public class MazeTask01 : MonoBehaviour
         }
     }
 
+    //draw walls and floors from the maze array data
     void DrawMaze() 
     {
         for (int x = 0; x < width; x++)

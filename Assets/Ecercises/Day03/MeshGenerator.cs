@@ -11,8 +11,8 @@ public static class MeshGenerator
 		float topLeftX = (width - 1) / -2f;
 		float topLeftZ = (height - 1) / 2f;
 
-		int simplificationIncrement = 3;//= (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
-		int verticesPerline = (width-1)/simplificationIncrement;//subtrak one from the edge
+		int simplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
+		int verticesPerline = (width-1)/simplificationIncrement;//sub one from the edge
 
 		MeshData meshData = new MeshData(verticesPerline, height);
 		int vertexINdex = 0;
@@ -26,7 +26,7 @@ public static class MeshGenerator
 
 				meshData.uvs[vertexINdex] = new Vector2(x / (float)width, y / (float)width);
 
-				//finally lets create those triangle faces
+				//create triangle faces
 				if (x < width - 1 && y < height - 1) //we are making a square
 				{
 					// i                 i+W=1              i+1

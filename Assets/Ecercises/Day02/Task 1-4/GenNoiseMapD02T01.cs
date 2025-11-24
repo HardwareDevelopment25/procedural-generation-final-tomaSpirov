@@ -3,12 +3,12 @@ using UnityEngine;
 public class GenNoiseMapD02T01 : MonoBehaviour
 {
     public Renderer textureRenderer;
-    public int mapChunkSize = 100;
-    public float noiseScale = 20f;
-    public int octaves = 4;
-    public float persistence = 0.5f;
-    public float lacunarity = 2f;
-    public int seed = 42;
+    public int mapChunkSize;// = 100;
+    public float noiseScale;// = 20f;
+    public int octaves;// = 4;
+    public float persistence;// = 0.5f;
+    public float lacunarity;// = 2f;
+    public int seed;// = 42;
     public Vector2 offset;
 
     public AnimationCurve falloffCurve;
@@ -23,7 +23,7 @@ public class GenNoiseMapD02T01 : MonoBehaviour
         regions = new MapColorGenerator.TerrainType[]
 {
     new MapColorGenerator.TerrainType { name = "Water", height = 0.3f, color = Color.blue },
-    new MapColorGenerator.TerrainType { name = "Sand", height = 0.4f, color = Color.beige },
+    new MapColorGenerator.TerrainType { name = "Sand", height = 0.4f, color = Color.orange },
     new MapColorGenerator.TerrainType { name = "Grass", height = 0.6f, color = Color.green },
     new MapColorGenerator.TerrainType { name = "Mountain", height = 0.8f, color = Color.gray },
     new MapColorGenerator.TerrainType { name = "Snow", height = 1.0f, color = Color.white }

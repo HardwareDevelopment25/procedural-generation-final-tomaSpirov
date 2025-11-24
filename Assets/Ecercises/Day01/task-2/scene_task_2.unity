@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1081291628}
   - component: {fileID: 1081291629}
-  - component: {fileID: 1081291630}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -159,30 +158,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1081291626}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 870fa7728d9cfc44c9e69865221ab904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   wallPrefab: {fileID: 1783924074203150037, guid: 3fc8ee16612d4a74f9599733647f9770, type: 3}
   floorPrefab: {fileID: 5969912372039819155, guid: 6526be06ae95c2c40a9e83e3cfdea7e3, type: 3}
-  MazeSize: 30
---- !u!114 &1081291630
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1081291626}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbb0ec964ca3fab4f8bc284baf50fe67, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wallPrefab: {fileID: 1783924074203150037, guid: 3fc8ee16612d4a74f9599733647f9770, type: 3}
-  floorPrefab: {fileID: 5969912372039819155, guid: 6526be06ae95c2c40a9e83e3cfdea7e3, type: 3}
-  cellSize: 1
-  mazeSize: 30
+  MazeSize: 100
 --- !u!1 &1231103149
 GameObject:
   m_ObjectHideFlags: 0

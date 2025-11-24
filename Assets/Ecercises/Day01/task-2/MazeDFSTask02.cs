@@ -1,9 +1,9 @@
+//Task 2: Generating a Maze using Depth-First Search (DFS)
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MazeDFSTask02 : MonoBehaviour
 {
-    private System.Random rand;
     private bool[,] maze;
 
     [Header("Maze Prefabs")]
@@ -17,7 +17,7 @@ public class MazeDFSTask02 : MonoBehaviour
     void Start()
     {
         maze = GenerateMaze(MazeSize);
-        DrawMaze();
+        DrawMaze(maze);
     }
 
     //step 1: define GenerateMaze method
@@ -78,26 +78,19 @@ public class MazeDFSTask02 : MonoBehaviour
             {
                 //push the current position back onto the stack to revisit later
                 stack.Push(currentPos);
-                rand = new System.Random();
+               
 
                 //randomly select one of the unvisited neighbors to move to
-                Vector2Int chosenNeighbor = unvisitedNeighbors[rand.Next(0, unvisitedNeighbors.Count)];
+                Vector2Int chosenNeighbor = unvisitedNeighbors[Random.Range(0, unvisitedNeighbors.Count)];
 
                 //carve a path between the current position and the chosen neighbor
-                
-                // maze[(currentPos.x + chosenNeighbor.x) / 2, (currentPos.y + chosenNeighbor.y) / 2] = true; //mark the wall between as path
-                
-                if (chosenNeighbor.x == currentPos.x)
-                {
-                    //same column, so it's a vertical move
-                    maze[chosenNeighbor.x, chosenNeighbor.y+1] = true; //mark the chosen neighbor as path
-                }
-                else 
-                {
-                    //same row, so it's a horizontal move
-                    maze[chosenNeighbor.x + 1, chosenNeighbor.y] = true; //mark the chosen neighbor as path
-                }
-                //mark the chosen neighbor as part of the maze (i.e., a path)
+
+
+                //mark the path to the chosen neighbor
+                //Debug.Log(" Chosen Neighbor Pos X: " + chosenNeighbor + " == Current Pos X: " + currentPos);
+                maze[(currentPos.x + chosenNeighbor.x) / 2, (currentPos.y + chosenNeighbor.y) / 2] = true; //mark the wall between as path
+               
+                //mark the chosen neighbor as part of the maze
                 maze[chosenNeighbor.x, chosenNeighbor.y] = true;
                 //push the chosen neighbor onto the stack to continue the DFS from there
                 stack.Push(chosenNeighbor);
@@ -111,11 +104,40 @@ public class MazeDFSTask02 : MonoBehaviour
         return maze;
     }
 
-    void DrawMaze()
+    public static List<Vector2Int> GetNeighbors(Vector2Int cell, bool[,] maze)
     {
-        for (int x = 0; x < MazeSize; x++)
+        List<Vector2Int> neighbors = new List<Vector2Int>();
+        int width = maze.GetLength(0);
+        int height = maze.GetLength(1);
+
+        Vector2Int[] directions = {
+            new Vector2Int(-1, 0), // left
+            new Vector2Int(1, 0),  // right
+            new Vector2Int(0, -1), // down
+            new Vector2Int(0, 1)   // up
+        };
+
+        foreach (Vector2Int dir in directions)
         {
-            for (int y = 0; y < MazeSize; y++)
+            Vector2Int neighbor = cell + dir;
+            if (neighbor.x >= 0 && neighbor.x < width && neighbor.y >= 0 && neighbor.y < height)
+            {
+                neighbors.Add(neighbor);
+            }
+        }
+
+        return neighbors;
+    }
+
+
+    void DrawMaze(bool[,] maze)
+    {
+        int width = maze.GetLength(0);
+        int height = maze.GetLength(1);
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
             {
                 if (maze[x, y])
                 {

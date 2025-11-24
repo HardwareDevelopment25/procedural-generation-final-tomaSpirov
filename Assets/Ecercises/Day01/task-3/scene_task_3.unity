@@ -168,7 +168,8 @@ MonoBehaviour:
   floorPrefab: {fileID: 5969912372039819155, guid: 6526be06ae95c2c40a9e83e3cfdea7e3, type: 3}
   goalPrefab: {fileID: 2833339211695919227, guid: 3a5b2ebd3cf38d84ab830be90ddcb26a, type: 3}
   playerPrefab: {fileID: 3514531852228607075, guid: 11006c3ec5fc810498ecc398174f7f0c, type: 3}
-  MazeSize: 10
+  trackPathPrefab: {fileID: 477847919493782326, guid: 8ac7b30671b8fe645bb7facd8b706d65, type: 3}
+  MazeSize: 30
 --- !u!114 &1081291630
 MonoBehaviour:
   m_ObjectHideFlags: 0

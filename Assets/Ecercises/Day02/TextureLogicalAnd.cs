@@ -49,13 +49,14 @@ public class TextureLogicalAnd : MonoBehaviour
 
         float[,] map = NoiseMapGenerator.GenerateNoiseMap(imageSize, imageSize, scaler, lac, oct, 1, rnd2.Next(), offsetsPos);
         float[,] falloffmap = NoiseMapGenerator.GenerateFallOffMap(imageSize, animCurve);
-        GetComponent<MeshRenderer>().material.mainTexture = DrawColorMapToTexture(map);
+       GetComponent<MeshRenderer>().material.mainTexture = DrawColorMapToTexture(map);
+        //GetComponent<MeshRenderer>().material.mainTexture = DrawGreyScaleMapToTexture(map);
 
     }
 
     private void Update()
     {
-        Start();
+       // Start();
     }
     public Texture2D DrawGreyScaleMapToTexture(float[,] mapToDraw)
     {

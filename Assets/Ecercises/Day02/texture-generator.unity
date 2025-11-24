@@ -119,54 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &281680390
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 281680392}
-  - component: {fileID: 281680393}
-  m_Layer: 0
-  m_Name: GameScene
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &281680392
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281680390}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.06513, y: 0, z: -1.57141}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &281680393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 281680390}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 283055cb9b08eb849ac7b45b4e017b50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  size: 50
-  seed: 100
-  wall: {fileID: 1783924074203150037, guid: 3fc8ee16612d4a74f9599733647f9770, type: 3}
-  floor: {fileID: 5969912372039819155, guid: 6526be06ae95c2c40a9e83e3cfdea7e3, type: 3}
 --- !u!1 &1200512397
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,8 +242,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   imageSize: 180
-  texture: {fileID: 0}
   scaler: 0.1
+  seed: 0
+  lac: 1
+  oct: 4
+  offsetsPos: {x: 0, y: 0}
+  whatColor_0: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  whatColor_1: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  whatColor_2: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  whatColor_3: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  whatColor_4: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  whatColor_5: {r: 1, g: 0.7529413, b: 0.7960785, a: 1}
+  colors: []
+  animCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1356056439
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,5 +524,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 1356056442}
   - {fileID: 1515507686}
-  - {fileID: 281680392}
   - {fileID: 1200512398}
