@@ -5,16 +5,16 @@ using UnityEngine;
 
 
 
-public class LSystem : MonoBehaviour
+public class FuzzyWeed : MonoBehaviour
 {
     //Step 1: Setting Up the Script
     [Header("L-System Configuration")]
-    public string Name = "L-System";
-    public int iterations = 4;
-    public float length = 10f;
-    public float angle = 90;
+    public string Name = "Fuzzy Weed";
+    public int iterations = 5;
+    public float length = 1.0f;
+    public float angle = 25;
     
-    public string axiom = "F";
+    public string axiom = "X";
     public string[] laws;
     [SerializeField]
     private Dictionary<char, string>rules = new Dictionary<char, string>();
@@ -130,12 +130,6 @@ public class LSystem : MonoBehaviour
     {
         GenerateLSystem();
         DrawLSystem();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     //Step 5: Completing the TransformInfo Class

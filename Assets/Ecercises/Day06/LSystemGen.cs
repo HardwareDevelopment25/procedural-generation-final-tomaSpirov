@@ -1,155 +1,166 @@
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
-public struct MyObjectData { 
-    public Vector3 position;
-    public Quaternion rotation;
-};
+
 
 public class LSystemGen : MonoBehaviour
 {
+    [Header("L-System objects & prefabs ")]
+    public GameObject turtlePrefab;
+    public GameObject branchPrefab;
+    public GameObject leafPrefab;
 
-    public GameObject turtle;
-    public GameObject point;
+    //Step 1: Setting Up the Script
+    [Header("L-System Configuration")]
+    public string Name = "L-System";
+    public int iterations = 4;
+    public float length = 10f;
+    public float angle = 90;
 
-    public GameObject pointGO;
-
-    public float length ;
-    public int iterations;
-    public float angle;
-    public string axiom;//starting string 
-
+    public string axiom = "F";
     public string[] laws;
-
-
-    
-    public string currentString;
-
     [SerializeField]
-    Dictionary<char, string> rules = new Dictionary<char, string>();
-    MyObjectData myObjectData = new MyObjectData();
-    Stack<MyObjectData> stack;
+    private Dictionary<char, string> rules = new Dictionary<char, string>();
 
+    TransformInfo transformInfo;
+
+    public string currentString;
+    LineRenderer lineRenderer;
+
+    //Step 2: Initializing the Rules
     private void Awake()
     {
-        myObjectData = new MyObjectData();
-        stack = new Stack<MyObjectData>();
-        
         foreach (var law in laws)
         {
             var l = law.Split("->");
             rules.Add(l[0][0], l[1]);
-
         }
+
+        //debug the rules dictionary print key and value
+        /*foreach (var rule in rules)
+        {
+            Debug.Log("Rule Key: " + rule.Key.ToString() + " -> Value: " + rule.Value.ToString());
+        }*/
         currentString = axiom;
-        GenerateSystemString();//create the string 
-        ApplyPatternRules(currentString);//apply rules to the string
     }
 
-    private void GenerateSystemString()
+    //Step 3: Generating the L-System String
+    private void GenerateLSystem()
     {
         for (int i = 0; i < iterations; i++)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var c in currentString) // for each character in the string
+
+            foreach (var c in currentString)
             {
                 sb.Append(rules.ContainsKey(c) ? rules[c] : char.ToString(c));
-
             }
+
             currentString = sb.ToString();
         }
-        Debug.Log("the current string is: "+ currentString);
+        Debug.Log("Generated Sting is: " + currentString);
     }
 
-
-
-
-    private void RrulesbyChar(char c) 
+    //Step 4: Drawing the L-System
+    private void DrawLSystem()
     {
-       
+        transformInfo = new TransformInfo(Vector3.zero, Quaternion.identity);
+        Stack<TransformInfo> transformStack = new Stack<TransformInfo>();
+        List<Vector3> positions = new List<Vector3>();
 
-        LineRenderer lineRenderer = turtle.GetComponent<LineRenderer>();
+        //reset position and rotation 
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
 
+        Vector3 currentPos = startPos;
+        Quaternion currentRot = startRot;
+        positions.Add(currentPos);
 
-        switch (c) 
+        //line renderer initialization
+        lineRenderer = turtlePrefab.GetComponent<LineRenderer>();
+        lineRenderer.useWorldSpace = true;
+        lineRenderer.positionCount = 0;
+
+        //apply all the rules to the current string char by char
+        foreach (var c in currentString)
         {
-            case 'X':
-                //- Do nothing (break).
-                break;
-            case 'F':
-                // - Draw forwards by length
-
-                //store turtle's position
-                myObjectData.position = turtle.transform.position;
-                //move turtle forwards by length
-                turtle.transform.position += new Vector3(0, 0, length);
-                myObjectData.position = turtle.transform.position;
-                //instantiate new turtle - store this to temporary variable
-                //Instantiate(point, new Vector3(0, 0, length), Quaternion.identity);
-                //access linerenderer from the new instantiate object
-                //set its first position to initial 
-                //set its second to newly instantiated object pos
-                //lineRenderer.DrawLine(lineRenderer.transform.position, myObjectData.position);
-
-
-
-                break;
-            case '+':
-                // - Rotate right by your angle attributes (should be set to 25 degrees).
-                myObjectData.rotation = Quaternion.Euler(0, angle, 0);
-                break;
-            case '-':
-                // - Rotate left by your angle attributes (should be set to 25 degrees).
-                myObjectData.rotation = Quaternion.Euler(0, angle, 0);
-                break;
-            case '[':
-
-
-                /*
-                    Save the primary turtle’s current position and rotation in a newly initialised TransformData struct.
-                    Save this data to your Stack. You can use the Stack.Push(T item) method to achieve this.
-                 */
-
-                break;
-            case ']':
-
-                //Restore the primary turtle’s position and rotation to be equal to the last stored position and rotation (this point you stored[)
-
-                break;
-
-
-        }
-        
-    }
-
-
-    private void ApplyPatternRules(string currStr) 
-    {
-
-        string strArrOfChars = currStr;
-        foreach (char c in strArrOfChars)
-        {
-
-            //Debug.Log(c);
-            RrulesbyChar(c);
-
+            switch (c)
+            {
+                //	Moves the drawing position forward when encountering 'F' or 'G'.
+                case 'F':
+                case 'G':
+                    Vector3 initialPos = currentPos;
+                    turtlePrefab.transform.position = currentPos += currentRot * Vector3.forward * length;
+                    positions.Add(currentPos);
+                    break;
+                //	Rotates the drawing direction when encountering '+' or '-'.
+                case '+':
+                    currentRot *= Quaternion.Euler(0, angle, 0);
+                    turtlePrefab.transform.rotation = currentRot;
+                    break;
+                case '-':
+                    currentRot *= Quaternion.Euler(0, -angle, 0);
+                    turtlePrefab.transform.rotation = currentRot;
+                    break;
+                //	Saves the current position and rotation on encountering '[' and restores it on ']'
+                case '[':
+                    transformStack.Push(new TransformInfo(currentPos, currentRot));
+                    turtlePrefab.transform.position = currentPos;
+                    turtlePrefab.transform.rotation = currentRot;
+                    break;
+                case ']':
+                    if (transformStack.Count > 0)
+                    {
+                        TransformInfo ti = transformStack.Pop();
+                        currentPos = ti.position;
+                        currentRot = ti.rotation;
+                        positions.Add(currentPos);
+                    }
+                    turtlePrefab.transform.position = currentPos;
+                    turtlePrefab.transform.rotation = currentRot;
+                    break;
+                default:
+                    // Do nothing for uknown character
+                    break;
+            }
         }
 
-
+        // Configure LineRenderer
+        lineRenderer.positionCount = positions.Count;
+        lineRenderer.SetPositions(positions.ToArray());
+        //lineRenderer.widthMultiplier = 0.1f;
+        //lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        //lineRenderer.startColor = Color.white;
+        //lineRenderer.endColor = Color.white;
 
     }
+
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       
+        GenerateLSystem();
+        DrawLSystem();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    //Step 5: Completing the TransformInfo Class
+    private class TransformInfo
+    {
+        public Vector3 position;
+        public Quaternion rotation;
+        public TransformInfo(Vector3 pos, Quaternion rot)
+        {
+            position = pos;
+            rotation = rot;
+        }
     }
 }

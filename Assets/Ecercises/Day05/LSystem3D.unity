@@ -364,7 +364,9 @@ MonoBehaviour:
   length: 1
   angle: 25
   axiom: X
-  laws: []
+  laws:
+  - X->F+[[X]-X]-F[-FX]+X
+  - F->FF
   currentString: 
 --- !u!1 &1588586003
 GameObject:

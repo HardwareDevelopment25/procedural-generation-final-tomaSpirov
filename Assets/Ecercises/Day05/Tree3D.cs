@@ -5,16 +5,20 @@ using UnityEngine;
 
 
 
-public class LSystem : MonoBehaviour
+public class Tree3D : MonoBehaviour
 {
+    [Header("L-System Prefabs")]
+    public GameObject woodPrefab;
+    public GameObject leafPrefab;
+
     //Step 1: Setting Up the Script
     [Header("L-System Configuration")]
-    public string Name = "L-System";
-    public int iterations = 4;
-    public float length = 10f;
-    public float angle = 90;
+    public string Name = "Tree3D";
+    public int iterations = 5;
+    public float length = 1.0f;
+    public float angle = 25;
     
-    public string axiom = "F";
+    public string axiom = "X";
     public string[] laws;
     [SerializeField]
     private Dictionary<char, string>rules = new Dictionary<char, string>();
@@ -83,9 +87,15 @@ public class LSystem : MonoBehaviour
                 //	Moves the drawing position forward when encountering 'F' or 'G'.
                 case 'F':
                 case 'G':
+                    Instantiate(woodPrefab, currentPos, Quaternion.identity);
                     Vector3 initialPos = currentPos;
                     currentPos += currentRot * Vector3.forward * length;
                     positions.Add(currentPos);
+                    //Instantiate wood prefab between initialPos and currentPos
+                   
+                    //Instantiate(woodPrefab, (initialPos + currentPos) / 2, Quaternion.LookRotation(currentRot * Vector3.up)).transform.localScale = new Vector3(0.1f, length / 2, 0.1f);
+                    //Instantiate(woodPrefab, (initialPos + currentPos) / 2, Quaternion.LookRotation(currentRot * Vector3.forward)).transform.localScale = new Vector3(0.1f, length / 2, 0.1f);
+                    //woodPrefab.transform.rotation = Quaternion.identity.normalized;
                     break;
                 //	Rotates the drawing direction when encountering '+' or '-'.
                 case '+':
@@ -130,12 +140,6 @@ public class LSystem : MonoBehaviour
     {
         GenerateLSystem();
         DrawLSystem();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     //Step 5: Completing the TransformInfo Class

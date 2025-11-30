@@ -5,13 +5,13 @@ using UnityEngine;
 
 
 
-public class LSystem : MonoBehaviour
+public class KochCurve : MonoBehaviour
 {
     //Step 1: Setting Up the Script
     [Header("L-System Configuration")]
-    public string Name = "L-System";
-    public int iterations = 4;
-    public float length = 10f;
+    public string Name = "Koch Curve";
+    public int iterations = 3;
+    public float length = 1.0f;
     public float angle = 90;
     
     public string axiom = "F";
@@ -130,12 +130,6 @@ public class LSystem : MonoBehaviour
     {
         GenerateLSystem();
         DrawLSystem();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     //Step 5: Completing the TransformInfo Class
