@@ -40,7 +40,9 @@ public class BSPDungeon_day08 : MonoBehaviour
     // - bool[,] grid
     private bool[,] _grid;
 
-    private GameObject parent;
+    
+    private GameObject parentFloor;
+
     private GameObject parentWalls;
 
     //private int SmallestPossibleRoom = 2;
@@ -69,7 +71,7 @@ public class BSPDungeon_day08 : MonoBehaviour
     // Generate():
     private void Generate()
     {
-        Debug.Log("Generating Dungeon Boss");
+        //Debug.Log("Generating Dungeon Boss");
         // 1) Clear previously spawned tiles
         ClearPreviouslySpawnedTiles();
         // 2) Initialise RNG
@@ -81,7 +83,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         SplitRecursive(_root, depth: 0);
         // 5) For each leaf: create a room
 
-        Debug.Log("Deb");
+       // Debug.Log("Deb");
         foreach (var leaf in _root.GetLeaves())
         {
             var room = CreateRoomInsideLeaf(leaf.rect);// YAY we made a room
@@ -108,8 +110,8 @@ public class BSPDungeon_day08 : MonoBehaviour
 
     private void SpawnFloorCubes()
     {
-        parent = new GameObject("BSP DUNGEON FLOOR");
-
+        parentFloor = new GameObject("BSP DUNGEON FLOOR");
+        parentFloor.transform.SetParent(this.transform, false);//WORKS added as not works before due to different gameobjects hierarchy
         // go through x and y in the grid and create floor
 
         for (int y = 0; y < height; y++)
@@ -120,10 +122,10 @@ public class BSPDungeon_day08 : MonoBehaviour
                 {
                     // create the floor where
                     var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    go.transform.SetParent(parent.transform);
                     go.name = $"Tile_{x}_{y}";
-                    go.transform.localPosition = new Vector3(x * tileSize, 0f, y * tileSize);
+                   go.transform.localPosition = new Vector3(x * tileSize, 0f, y * tileSize);//testing
                     go.transform.localScale = new Vector3(tileSize, 0.1f, tileSize);
+                    go.transform.SetParent(parentFloor.transform, false);//WORKS
 
                     if (floorMaterial != null)
                     {
@@ -139,7 +141,8 @@ public class BSPDungeon_day08 : MonoBehaviour
     private void BuildEdgeWallsFromGrid()
     {
         parentWalls = new GameObject("BSP DUNGEON EDGE WALLS");
-
+        parentWalls.transform.SetParent(this.transform,false);//WORKS added as not works before due to different gameobjects hierarchy
+        
         // horizontal edge - between row y and y+1
         ScanHorizontalEdges();
 
@@ -337,8 +340,12 @@ public class BSPDungeon_day08 : MonoBehaviour
     {
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.name = name;
-        if (parentWalls == null) parentWalls = new GameObject("BSP DUNGEON EDGE WALLS");
-        cube.transform.SetParent(parentWalls.transform);
+        if (parentWalls == null)
+        { 
+            parentWalls = new GameObject("BSP DUNGEON EDGE WALLS");
+            parentWalls.transform.SetParent(this.transform,false);//added as not works before due to different gameobjects hierarchy
+        }
+        cube.transform.SetParent(parentWalls.transform, false);
 
         cube.transform.localPosition = center;
         cube.transform.localScale = scale;
@@ -447,7 +454,7 @@ public class BSPDungeon_day08 : MonoBehaviour
 
     void SplitRecursive(Node node, int depth)
     {
-        Debug.Log("Recuresion " + depth);
+        //Debug.Log("Recuresion " + depth);
         // a) Stopping rules: if depth is high enough OR rect is too small, return
         if (depth >= maxDepth ||
         node.rect.width < 2 * minLeafSize && node.rect.height < 2 * minLeafSize) return;
@@ -531,7 +538,7 @@ public class BSPDungeon_day08 : MonoBehaviour
     {
         // destroy everything you ever made
         // foreach (GameObject g in transform) GameObject.Destroy(g);
-        GameObject.Destroy(parent);// killes em all
+        GameObject.Destroy(parentFloor);// killes em all
         GameObject.Destroy(parentWalls);
     }
 }
