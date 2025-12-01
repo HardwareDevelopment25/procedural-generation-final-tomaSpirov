@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+//Task Sheet 2 - Edge Walls Around Floor Tiles 
+// Edge wall plan:
+// - Find edges where floor meets empty.
+// - Merge consecutive edges into long strips.
+// - For each strip, spawn a thin wall cube.
 
 
+//Adding Edge Walls
 public class BSPDungeon_day08 : MonoBehaviour
 {
     // TODO: fields we need:
@@ -17,12 +23,27 @@ public class BSPDungeon_day08 : MonoBehaviour
     public float tileSize = 1f;
     // - material for floor cubes
     public Material floorMaterial;
+
+    // Edge walls configuration:
+
+    public bool buildEdgeWalls = true;// toggle edge wall generation (thin boundary walls)
+    
+    public float wallHeight = 2f;// height of wall
+    
+    public float wallThickness = 0.25f;// thickness of wall strips
+    
+    public Material wallMaterial;
+
+    //seed
+    public int seed = 10;//use seed to get same result for testing
+
     // - bool[,] grid
     private bool[,] _grid;
 
     private GameObject parent;
+    private GameObject parentWalls;
 
-    private int SmallestPossibleRoom = 2;
+    //private int SmallestPossibleRoom = 2;
 
     public int border = 2, corridorWidth = 1;
     // - System.Random rng
@@ -38,7 +59,7 @@ public class BSPDungeon_day08 : MonoBehaviour
 
     private void Awake()
     {
-        _rng = new System.Random();
+        _rng = new System.Random(seed);
     }
     private void Start()
     {
@@ -55,7 +76,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         // 3) Create root RectInt for map interior
         RectInt FirstLovelyRootRectangle = new RectInt(border, border, Mathf.Max(1, width - border), Mathf.Max(1, height - border));
         _root = new Node(FirstLovelyRootRectangle);
-       
+
         // 4) Build BSP tree with SplitRecursive
         SplitRecursive(_root, depth: 0);
         // 5) For each leaf: create a room
@@ -80,6 +101,9 @@ public class BSPDungeon_day08 : MonoBehaviour
         // 8) Instantiate floor cubes from _grid
         SpawnFloorCubes();
 
+        // 9) Build thin edge walls around floor tiles (boundary between floor and empty)
+        // if (buildEdgeWalls) BuildEdgeWallsFromGrid();
+        if (buildEdgeWalls) BuildEdgeWallsFromGrid();
     }
 
     private void SpawnFloorCubes()
@@ -101,13 +125,230 @@ public class BSPDungeon_day08 : MonoBehaviour
                     go.transform.localPosition = new Vector3(x * tileSize, 0f, y * tileSize);
                     go.transform.localScale = new Vector3(tileSize, 0.1f, tileSize);
 
-                    // maybe later add some material for prettyness
-
+                    if (floorMaterial != null)
+                    {
+                        var renderer = go.GetComponent<Renderer>();
+                        if (renderer != null) renderer.material = floorMaterial;
+                    }
                 }
             }
         }
     }
 
+    // Builds thin wall strips by scanning for edges in the _grid
+    private void BuildEdgeWallsFromGrid()
+    {
+        parentWalls = new GameObject("BSP DUNGEON EDGE WALLS");
+
+        // horizontal edge - between row y and y+1
+        ScanHorizontalEdges();
+
+        // vertical edge - between column x and x+1
+        ScanVerticalEdges();
+
+        // outer boundaries (floor touching 'outside' which is false)
+        ScanOuterBoundaries();
+    }
+
+    private void ScanHorizontalEdges()
+    {
+        if (_grid == null) return;
+
+        for (int y = 0; y <= height - 2; y++)
+        {
+            int x = 0;
+            while (x < width)
+            {
+                bool diff = _grid[x, y] != _grid[x, y + 1];
+                if (!diff)
+                {
+                    x++;
+                    continue;
+                }
+                int xStart = x;
+                
+                while (x < width && (_grid[x, y] != _grid[x, y + 1]))
+                {
+                    x++;
+                }
+                int xEnd = x; 
+
+                // create horizontal wall strip
+                CreateWallStripHorizontal(xStart, xEnd, y);
+            }
+        }
+    }
+
+    // create a horizontal wall strip between row y and y+1 for x
+    private void CreateWallStripHorizontal(int startX, int endX, int y)
+    {
+        int length = endX - startX;
+        if (length <= 0) return;
+
+       
+        float centerX = ((startX + endX - 1) * 0.5f) * tileSize;
+        float centerZ = (y + 0.5f) * tileSize;
+
+        Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+        Vector3 scale = new Vector3(length * tileSize, wallHeight, wallThickness * tileSize);
+
+        SpawnWallStrip(center, scale, $"Wall_H_{startX}_{endX - 1}_Row{y}");
+    }
+
+   
+    private void ScanVerticalEdges()
+    {
+        if (_grid == null) return;
+
+        for (int x = 0; x <= width - 2; x++)
+        {
+            int y = 0;
+            while (y < height)
+            {
+                bool diff = _grid[x, y] != _grid[x + 1, y];
+                if (!diff)
+                {
+                    y++;
+                    continue;
+                }
+
+                int yStart = y;
+                while (y < height && (_grid[x, y] != _grid[x + 1, y]))
+                {
+                    y++;
+                }
+                int yEnd = y;
+                // create vertical wall strip
+                CreateWallStripVertical(yStart, yEnd, x);
+            }
+        }
+    }
+
+    // Create a vertical wall strip between column x and x+1 for y
+    private void CreateWallStripVertical(int startY, int endY, int x)
+    {
+        int length = endY - startY;
+        if (length <= 0) return;
+
+        
+        float centerX = (x + 0.5f) * tileSize;
+        float centerZ = ((startY + endY - 1) * 0.5f) * tileSize;
+
+        Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+        Vector3 scale = new Vector3(wallThickness * tileSize, wallHeight, length * tileSize);
+
+        SpawnWallStrip(center, scale, $"Wall_V_{startY}_{endY - 1}_Col{x}");
+    }
+
+    
+    private void ScanOuterBoundaries()
+    {
+        if (_grid == null) return;
+
+        // Top boundary (between outside and row 0)
+        {
+            int x = 0;
+            while (x < width)
+            {
+                if (_grid[x, 0] == true)
+                {
+                    int start = x;
+                    while (x < width && _grid[x, 0] == true) x++;
+                    int end = x;
+
+                    float centerX = ((start + end - 1) * 0.5f) * tileSize;
+                    float centerZ = (-0.5f) * tileSize; // half step above row 0
+                    Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+                    Vector3 scale = new Vector3((end - start) * tileSize, wallHeight, wallThickness * tileSize);
+                    SpawnWallStrip(center, scale, $"Wall_OuterTop_{start}_{end - 1}");
+                }
+                else x++;
+            }
+        }
+
+        // Bottom boundary (between row height-1 and outside)
+        {
+            int x = 0;
+            while (x < width)
+            {
+                if (_grid[x, height - 1] == true)
+                {
+                    int start = x;
+                    while (x < width && _grid[x, height - 1] == true) x++;
+                    int end = x;
+
+                    float centerX = ((start + end - 1) * 0.5f) * tileSize;
+                    float centerZ = (height - 0.5f) * tileSize; // half step below last row
+                    Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+                    Vector3 scale = new Vector3((end - start) * tileSize, wallHeight, wallThickness * tileSize);
+                    SpawnWallStrip(center, scale, $"Wall_OuterBottom_{start}_{end - 1}");
+                }
+                else x++;
+            }
+        }
+
+        // Left boundary (between outside and col 0)
+        {
+            int y = 0;
+            while (y < height)
+            {
+                if (_grid[0, y] == true)
+                {
+                    int start = y;
+                    while (y < height && _grid[0, y] == true) y++;
+                    int end = y;
+
+                    float centerX = (-0.5f) * tileSize; // half step left of col 0
+                    float centerZ = ((start + end - 1) * 0.5f) * tileSize;
+                    Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+                    Vector3 scale = new Vector3(wallThickness * tileSize, wallHeight, (end - start) * tileSize);
+                    SpawnWallStrip(center, scale, $"Wall_OuterLeft_{start}_{end - 1}");
+                }
+                else y++;
+            }
+        }
+
+        // Right boundary (between col width-1 and outside)
+        {
+            int y = 0;
+            while (y < height)
+            {
+                if (_grid[width - 1, y] == true)
+                {
+                    int start = y;
+                    while (y < height && _grid[width - 1, y] == true) y++;
+                    int end = y;
+
+                    float centerX = (width - 0.5f) * tileSize; // half step right of last col
+                    float centerZ = ((start + end - 1) * 0.5f) * tileSize;
+                    Vector3 center = new Vector3(centerX, wallHeight * 0.5f, centerZ);
+                    Vector3 scale = new Vector3(wallThickness * tileSize, wallHeight, (end - start) * tileSize);
+                    SpawnWallStrip(center, scale, $"Wall_OuterRight_{start}_{end - 1}");
+                }
+                else y++;
+            }
+        }
+    }
+
+    // Spawning thin wall strips
+    //instantiate a cube, set position to center, scale to scale,
+    //assign wallMaterial, parent under this dungeon's walls parent
+    private void SpawnWallStrip(Vector3 center, Vector3 scale, string name)
+    {
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.name = name;
+        if (parentWalls == null) parentWalls = new GameObject("BSP DUNGEON EDGE WALLS");
+        cube.transform.SetParent(parentWalls.transform);
+
+        cube.transform.localPosition = center;
+        cube.transform.localScale = scale;
+
+        if (wallMaterial != null)
+        {
+            var renderer = cube.GetComponent<Renderer>();
+            if (renderer != null) renderer.material = wallMaterial;
+        }
+    }
 
     private void ConnectTree(Node node)
     {
@@ -179,7 +420,6 @@ public class BSPDungeon_day08 : MonoBehaviour
         }
     }
 
-
     // This will simply take that leaf and within it put a random sized room
     private RectInt CreateRoomInsideLeaf(RectInt thisLeaf)
     {
@@ -203,9 +443,6 @@ public class BSPDungeon_day08 : MonoBehaviour
         int y = _rng.Next(thisLeaf.yMin + border, thisLeaf.yMax - border - h + 1);
 
         return new RectInt(x, y, w, h);
-
-
-
     }
 
     void SplitRecursive(Node node, int depth)
@@ -295,12 +532,12 @@ public class BSPDungeon_day08 : MonoBehaviour
         // destroy everything you ever made
         // foreach (GameObject g in transform) GameObject.Destroy(g);
         GameObject.Destroy(parent);// killes em all
+        GameObject.Destroy(parentWalls);
     }
 }
 
 
-//Write a comment above the class explaining what a leaf is and why leaves are where rooms go.
-// A leaf has no further splits, making it perfect to spawn a room in
+// A leaf (this is the end of the tree branch) has no further splits, making it perfect to spawn a room in
 
 class Node
 {
@@ -334,6 +571,4 @@ class Node
         if (r.HasValue) return r;
         return right?.GetAnyRoom();
     }
-
-
 }

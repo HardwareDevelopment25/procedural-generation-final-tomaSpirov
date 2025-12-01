@@ -291,7 +291,7 @@ MonoBehaviour:
   roomSizeMin: {x: 4, y: 4}
   roomSizeMax: {x: 12, y: 10}
   tileSize: 1
-  floorMaterial: {fileID: 0}
+  floorMaterial: {fileID: 2100000, guid: 9d6e79cb1faa019408a28067c49a7587, type: 2}
   border: 2
   BiasToLongerRooms: 0.8
 --- !u!1 &961739749

@@ -27,7 +27,7 @@ public class BSPDungeon : MonoBehaviour
 
     private GameObject parent;
 
-    private int SmallestPossibleRoom = 2;
+    //private int SmallestPossibleRoom = 2;
 
     public int border = 2;
     // - System.Random rng
