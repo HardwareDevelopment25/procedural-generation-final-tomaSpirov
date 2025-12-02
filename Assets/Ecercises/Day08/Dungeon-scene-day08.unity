@@ -406,10 +406,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3107ab0af3f0dcd4c8565bc4a3bbd893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parent: {fileID: 1732475472}
   dungeonPrefab: {fileID: 5788442234770133653, guid: 9125400e19e53994f935a5d1a5b61971, type: 3}
   floorCount: 3
-  floorHeight: 3
+  floorHeight: 2
+  stairsPrefab: {fileID: 3063088085881694835, guid: 2dde957ea868f3a4285ae746a932f590, type: 3}
+  stairYOffset: 1
+  landingRadius: 0
+  holeRadius: 1
 --- !u!4 &1732475474
 Transform:
   m_ObjectHideFlags: 0

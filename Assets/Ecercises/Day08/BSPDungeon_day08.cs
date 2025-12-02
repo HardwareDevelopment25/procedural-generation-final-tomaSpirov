@@ -23,6 +23,7 @@ public class BSPDungeon_day08 : MonoBehaviour
     public float tileSize = 1f;
     // - material for floor cubes
     public Material floorMaterial;
+    public Material floorMaterialEmpty;
 
     // Edge walls configuration:
 
@@ -73,7 +74,8 @@ public class BSPDungeon_day08 : MonoBehaviour
     {
         //Debug.Log("Generating Dungeon Boss");
         // 1) Clear previously spawned tiles
-        ClearPreviouslySpawnedTiles();
+        //ClearePreviousSpawnedFloors();
+        //ClearPreviouslySpawnedTiles();
         // 2) Initialise RNG
         // 3) Create root RectInt for map interior
         RectInt FirstLovelyRootRectangle = new RectInt(border, border, Mathf.Max(1, width - border), Mathf.Max(1, height - border));
@@ -101,7 +103,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         RasterizeRoomsAndCorridors(); // render this out in some way
 
         // 8) Instantiate floor cubes from _grid
-        SpawnFloorCubes();
+       //SpawnFloorCubes();
 
         // 9) Build thin edge walls around floor tiles (boundary between floor and empty)
         // if (buildEdgeWalls) BuildEdgeWallsFromGrid();
@@ -111,21 +113,23 @@ public class BSPDungeon_day08 : MonoBehaviour
     private void SpawnFloorCubes()
     {
         parentFloor = new GameObject("BSP DUNGEON FLOOR");
-        parentFloor.transform.SetParent(this.transform, false);//WORKS added as not works before due to different gameobjects hierarchy
+        parentFloor.transform.SetParent(transform, false);//WORKS added as not works before due to different gameobjects hierarchy
         // go through x and y in the grid and create floor
 
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
             {
+                
                 if (_grid != null && _grid[x, y] == true)
                 {
-                    // create the floor where
+                    // create the floor
                     var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
                     go.name = $"Tile_{x}_{y}";
-                   go.transform.localPosition = new Vector3(x * tileSize, 0f, y * tileSize);//testing
+                    go.transform.localPosition = new Vector3(x * tileSize, 0f, y * tileSize);//testing
                     go.transform.localScale = new Vector3(tileSize, 0.1f, tileSize);
                     go.transform.SetParent(parentFloor.transform, false);//WORKS
+
 
                     if (floorMaterial != null)
                     {
@@ -133,6 +137,8 @@ public class BSPDungeon_day08 : MonoBehaviour
                         if (renderer != null) renderer.material = floorMaterial;
                     }
                 }
+
+               
             }
         }
     }
@@ -506,7 +512,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         }
         else
         {
-            // Copy the above but slice horizontally
+            
             //split horizontally
 
             // we dont want to put a room in a place it wont fit
@@ -537,10 +543,91 @@ public class BSPDungeon_day08 : MonoBehaviour
     private void ClearPreviouslySpawnedTiles()
     {
         // destroy everything you ever made
-        // foreach (GameObject g in transform) GameObject.Destroy(g);
-        GameObject.Destroy(parentFloor);// killes em all
-        GameObject.Destroy(parentWalls);
+        if(parentFloor!=null) GameObject.Destroy(parentFloor);
+        if(parentWalls != null) GameObject.Destroy(parentWalls);
+       
     }
+
+    private void ClearePreviousSpawnedFloors() 
+    {
+        // destroy everything you ever made
+        if (parentFloor != null) GameObject.Destroy(parentFloor);
+    }
+
+    //choose a tile inside a random room
+    public bool TryGetRandomRoomTile(out Vector2Int tile)
+    {
+        tile = Vector2Int.zero;
+        if (_rooms == null || _rooms.Count == 0) return false;
+
+        // random room
+        var room = _rooms[_rng.Next(_rooms.Count)];
+
+        // random tile inside that room
+        int x = _rng.Next(room.xMin, room.xMax);
+        int y = _rng.Next(room.yMin, room.yMax);
+        tile = new Vector2Int(x, y);
+        return true;
+    }
+
+    //force tiles around the tile to be floor
+    public void EnsureLanding(Vector2Int tile, int radius)
+    {
+        for (int dy = -radius; dy <= radius; dy++)
+        {
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                int nx = tile.x + dx;
+                int ny = tile.y + dy;
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                    _grid[nx, ny] = true;
+            }
+        }
+    }
+
+    //turn some floor tiles into empty for stair openings
+    public void CutHole(Vector2Int tile, int radius)
+    {
+        for (int dy = -radius; dy <= radius; dy++)
+        {
+            for (int dx = -radius; dx <= radius; dx++)
+            {
+                int nx = tile.x + dx;
+                int ny = tile.y + dy;
+                if (nx >= 0 && nx < width && ny >= 0 && ny < height)
+                {
+                    _grid[nx, ny] = false;
+                    Debug.Log("Cuttet at x:" + nx + ",y: " + ny + " => false/" + _grid[nx, ny]);
+                }
+                   
+            }
+        }
+        Debug.Log("Exit Cutter method");
+    }
+
+    //return world-space centre of a tile on this floor.
+    public Vector3 TileToWorldCenter(Vector2Int tile)
+    {
+        float cx = (tile.x) * tileSize;
+        float cz = (tile.y-1f) * tileSize;
+        return transform.TransformPoint(new Vector3(cx, 0f, cz));
+    }
+
+    //destroy existing cubes/walls and rebuild from _grid
+    public void RefreshVisualsFromGrid()
+    {
+        Debug.Log("UPDATED-REDRAWED");
+        // Clear old visuals
+       //ClearPreviouslySpawnedTiles();
+        ClearePreviousSpawnedFloors();
+       
+        // Rebuild floor cubes
+        SpawnFloorCubes();
+
+        // Rebuild edge walls if enabled
+        //if (buildEdgeWalls) BuildEdgeWallsFromGrid();
+    }
+
 }
 
 

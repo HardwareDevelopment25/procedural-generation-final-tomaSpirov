@@ -52,12 +52,12 @@ MonoBehaviour:
   roomSizeMax: {x: 12, y: 10}
   tileSize: 1
   floorMaterial: {fileID: 2100000, guid: 9d6e79cb1faa019408a28067c49a7587, type: 2}
+  floorMaterialEmpty: {fileID: 2100000, guid: db0d7124619d72448b2370de9aa470c0, type: 2}
   buildEdgeWalls: 1
   wallHeight: 2
   wallThickness: 0.25
   wallMaterial: {fileID: 2100000, guid: 3f7f57ba29081b1469adfb86aa9cca8f, type: 2}
   seed: 10
-  parent: {fileID: 137309007929180212}
   border: 2
   corridorWidth: 1
   BiasToLongerRooms: 0.8
