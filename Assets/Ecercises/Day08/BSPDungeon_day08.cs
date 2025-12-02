@@ -48,7 +48,7 @@ public class BSPDungeon_day08 : MonoBehaviour
 
     //private int SmallestPossibleRoom = 2;
 
-    public int border = 2, corridorWidth = 1;
+    public int border = 2, corridorWidth = 2;
     // - System.Random rng
     private System.Random _rng;
 
@@ -400,7 +400,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         {
             int x0 = Mathf.Min(from.x, to.x);
             int w = Mathf.Abs(from.x - to.x);
-            var rect = new RectInt(x0, from.y, w + 1, 1);
+            var rect = new RectInt(x0, from.y, w + 2, 2);
             _corridors.Add(rect);
             return;
         }
@@ -409,7 +409,7 @@ public class BSPDungeon_day08 : MonoBehaviour
         {
             int y0 = Mathf.Min(from.y, to.y);
             int h = Mathf.Abs(from.y - to.y);
-            var rect = new RectInt(from.x, y0, 1, h + 1);
+            var rect = new RectInt(from.x, y0, 2, h + 2);
             _corridors.Add(rect);
             return;
         }
