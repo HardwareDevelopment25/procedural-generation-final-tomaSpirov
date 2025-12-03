@@ -24,7 +24,7 @@ public class Tree3D : MonoBehaviour
     private Dictionary<char, string>rules = new Dictionary<char, string>();
     
     public string currentString;
-    LineRenderer lineRenderer;
+   
 
     //Step 2: Initializing the Rules
     private void Awake()
@@ -35,11 +35,6 @@ public class Tree3D : MonoBehaviour
             rules.Add(l[0][0], l[1]);
         }
 
-        //debug the rules dictionary print key and value
-        /*foreach (var rule in rules)
-        {
-            Debug.Log("Rule Key: " + rule.Key.ToString() + " -> Value: " + rule.Value.ToString());
-        }*/
          currentString = axiom;
     }
 
@@ -64,20 +59,10 @@ public class Tree3D : MonoBehaviour
     private void DrawLSystem() 
     {
         Stack<TransformInfo> transformStack = new Stack<TransformInfo>();
-        List<Vector3> positions = new List<Vector3>();
-
-        //reset position and rotation 
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
-
-        Vector3 currentPos = startPos;
-        Quaternion currentRot = startRot;
-        positions.Add(currentPos);
-
-        //line renderer initialization
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.useWorldSpace = true;
-        lineRenderer.positionCount = 0;
+        
+        Vector3 currentPos = transform.position;
+        Quaternion currentRot = transform.rotation;
+        Vector3 startPos = Vector3.zero;
 
         //apply all the rules to the current string char by char
         foreach (var c in currentString)
@@ -87,17 +72,18 @@ public class Tree3D : MonoBehaviour
                 //	Moves the drawing position forward when encountering 'F' or 'G'.
                 case 'F':
                 case 'G':
-                    Instantiate(woodPrefab, currentPos, Quaternion.identity);
-                    Vector3 initialPos = currentPos;
+                    startPos = currentPos;
                     currentPos += currentRot * Vector3.forward * length;
-                    positions.Add(currentPos);
-                    //Instantiate wood prefab between initialPos and currentPos
-                   
-                    //Instantiate(woodPrefab, (initialPos + currentPos) / 2, Quaternion.LookRotation(currentRot * Vector3.up)).transform.localScale = new Vector3(0.1f, length / 2, 0.1f);
-                    //Instantiate(woodPrefab, (initialPos + currentPos) / 2, Quaternion.LookRotation(currentRot * Vector3.forward)).transform.localScale = new Vector3(0.1f, length / 2, 0.1f);
-                    //woodPrefab.transform.rotation = Quaternion.identity.normalized;
-                    break;
+                    
+                    Instantiate(woodPrefab, (startPos+currentPos)/2, Quaternion.LookRotation(currentPos-startPos)).transform.localScale =new Vector3(0.5f,0.5f,length);
+                  break;
                 //	Rotates the drawing direction when encountering '+' or '-'.
+                case 'X':
+                    startPos = currentPos;
+                    Instantiate(leafPrefab, currentPos, currentRot);
+                    //Instantiate(leafPrefab, (startPos + currentPos) / 2, Quaternion.LookRotation(currentPos - startPos)).transform.localScale = new Vector3(0.1f, 0.1f, length);
+
+                    break;
                 case '+':
                     currentRot *= Quaternion.Euler(0, angle, 0);
                     break;
@@ -114,7 +100,7 @@ public class Tree3D : MonoBehaviour
                         TransformInfo ti = transformStack.Pop();
                         currentPos = ti.position;
                         currentRot = ti.rotation;
-                        positions.Add(currentPos);
+                        
                     }
                     break;
                 default:
@@ -123,13 +109,7 @@ public class Tree3D : MonoBehaviour
             }
         }
 
-        // Configure LineRenderer
-        lineRenderer.positionCount = positions.Count;
-        lineRenderer.SetPositions(positions.ToArray());
-        //lineRenderer.widthMultiplier = 0.1f;
-        //lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        //lineRenderer.startColor = Color.white;
-        //lineRenderer.endColor = Color.white;
+        
 
     }
 
